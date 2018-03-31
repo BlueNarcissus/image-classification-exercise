@@ -1,0 +1,3 @@
+Image classification algorithm of ImageNet with 2 layer neural network as a nonlinear classifier. 
+Maximum validation accuracy = 51.6%, with training accuracy = 49.1%
+Maximum training accuracy = 50.2%, with validation accuracy = 50.2%
