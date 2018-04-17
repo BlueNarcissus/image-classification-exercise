@@ -9,7 +9,7 @@ Overall structure of fully-connceted neural network
     which is well-written in the course materials.
     
     Update rules include:
-      - SGDStochastic Gradient Descent
+      - SGD (Stochastic Gradient Descent)
       - SGD+Momentum
       - RMSProp
       - Adam
