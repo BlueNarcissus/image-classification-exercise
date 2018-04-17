@@ -16,4 +16,4 @@ Overall structure of fully-connceted neural network
 
 Results:
 - Adam is the update rule that achieves the best training and validation accuracy.
-- The best validation accuracy achieved is >55%.
+- The best validation accuracy achieved so far is around 55%.
