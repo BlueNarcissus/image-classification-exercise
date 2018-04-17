@@ -14,3 +14,6 @@ Overall structure of fully-connceted neural network
       - RMSProp
       - Adam
 
+Results:
+- Adam is the update rule that achieves the best training and validation accuracy.
+- The best validation accuracy achieved is >55%.
