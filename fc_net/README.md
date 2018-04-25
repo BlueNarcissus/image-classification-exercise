@@ -4,7 +4,7 @@ Overall structure of fully-connceted neural network
 
 2. 'cs231n/classifiers/fc_net.py': training model for an L-layer neural network. 
 
-    General structure: (Affine - Batch Norm - ReLU - Dropout)*(L-1) - Affine - Softmax loss
+    Overall structure: (Affine - Batch Norm - ReLU - Dropout)*(L-1) - Affine - Softmax loss
 
    'cs231n/layers.py': functions to compute loss and gradients. 
 
