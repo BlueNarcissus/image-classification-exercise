@@ -160,6 +160,13 @@ class FullyConnectedNet(object):
             self.params['W%d'%(i+1)] = weight_scale*np.random.randn(dimension[i], dimension[i+1])
             self.params['b%d'%(i+1)] = np.zeros(dimension[i+1])
         
+        self.gamma = {}
+        self.beta = {}
+        if self.use_batchnorm:
+            for i in range(1, self.num_layers):
+                self.gamma[i] = np.ones(hidden_dims[i-1])
+                self.beta[i] = np.zeros(hidden_dims[i-1])
+
         ############################################################################
         # TODO: Initialize the parameters of the network, storing all values in    #
         # the self.params dictionary. Store weights and biases for the first layer #
@@ -190,7 +197,7 @@ class FullyConnectedNet(object):
         self.bn_params = []
         if self.use_batchnorm:
             self.bn_params = [{'mode': 'train'} for i in range(self.num_layers - 1)]
-
+        
         # Cast all parameters to the correct datatype
         for k, v in self.params.items():
             self.params[k] = v.astype(dtype)
@@ -217,11 +224,19 @@ class FullyConnectedNet(object):
         scores = None
         L = self.num_layers
         hidden_layer = {}
+        bn_cache = {}
+        dropout_cache = {}
         hidden_layer[0] = X
         for i in range(1, L):
             hidden, _ = affine_forward(hidden_layer[i-1], self.params['W%d'%i], self.params['b%d'%i])
+            if self.use_batchnorm:
+                hidden, bn_cache[i] = batchnorm_forward(hidden, self.gamma[i], self.beta[i], self.bn_params[i-1])
             hidden_layer[i], _ = relu_forward(hidden)
+            if self.use_dropout:
+                hidden_layer[i], dropout_cache[i] = dropout_forward(hidden_layer[i], self.dropout_param)
+            
         scores, _ = affine_forward(hidden_layer[L-1], self.params['W%d'%L], self.params['b%d'%L])
+        
         
         ############################################################################
         # TODO: Implement the forward pass for the fully-connected net, computing  #
@@ -254,7 +269,11 @@ class FullyConnectedNet(object):
 
         # relu_backward - affine_backward for the previous L-1 layers. i~[2,1]
         for i in range(L-1, 0, -1):
+            if self.use_dropout:
+                dh[i] = dropout_backward(dh[i], dropout_cache[i])
             dh[i]  = relu_backward(dh[i], hidden_layer[i])
+            if self.use_batchnorm:
+                dh[i], _, _ = batchnorm_backward(dh[i], bn_cache[i])
             dh[i-1], grads['W%d'%i], grads['b%d'%i] = affine_backward(dh[i], (hidden_layer[i-1], self.params['W%d'%i], self.params['b%d'%i]))
             grads['W%d'%i] += self.reg*self.params['W%d'%i]
         dX = dh[0]
